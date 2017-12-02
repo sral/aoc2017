@@ -43,22 +43,44 @@
 // Your puzzle answer was 1390.
 //
 // The first half of this puzzle is complete! It provides one gold star: *
+//
+// --- Part Two ---
+//
+// You notice a progress bar that jumps to 50% completion. Apparently, the door isn't yet
+// satisfied, but it did emit a star as encouragement. The instructions change:
+//
+// Now, instead of considering the next digit, it wants you to consider the digit halfway around
+// the circular list. That is, if your list contains 10 items, only include a digit in your sum if
+// the digit 10/2 = 5 steps forward matches it. Fortunately, your list has an even number of
+// elements.
+//
+// For example:
+// - 1212 produces 6: the list contains 4 items, and all four digits match the digit 2 items ahead.
+// - 1221 produces 0, because every comparison is between a 1 and a 2.
+// - 123425 produces 4, because both 2s match each other, but no other digit has a match.
+// - 123123 produces 12.
+// - 12131415 produces 4.
+//
+// What is the solution to your new captcha?
+//
+// Your puzzle answer was 1232.
+//
+// Both parts of this puzzle are complete! They provide two gold stars: **
 
 use std::io;
 
-fn solve_captcha(digits: &[u32]) -> u32 {
+fn solve_captcha(digits: &[u32], offset: usize) -> u32 {
     let mut sum = 0;
     if digits.len() == 0 {
         return sum;
     }
 
-    let mut prev = digits[0];
-    for i in 1..digits.len() + 1 {
-        let curr = digits[i % digits.len()];
-        if prev == curr {
-            sum += prev;
+    for i in 0..digits.len() {
+        let curr = digits[i];
+        let next = digits[(i + offset) % digits.len()];
+        if curr == next {
+            sum += curr;
         }
-        prev = curr;
     }
 
     sum
@@ -70,7 +92,8 @@ fn main() {
     buf.trim();
     let input: Vec<u32> = buf.chars().map(|c| c.to_digit(10).unwrap()).collect();
 
-    println!("CAPTCHA soution: {}", solve_captcha(&input))
+    println!("CAPTCHA soution #1: {}", solve_captcha(&input, 1));
+    println!("CAPTCHA soution #2: {}", solve_captcha(&input, input.len() / 2));
 }
 
 #[cfg(test)]
@@ -79,10 +102,20 @@ mod test {
 
     #[test]
     fn part_one_examples_test() {
-        assert_eq!(solve_captcha(&[]), 0);
-        assert_eq!(solve_captcha(&[1, 1, 2, 2]), 3);
-        assert_eq!(solve_captcha(&[1, 1, 1, 1]), 4);
-        assert_eq!(solve_captcha(&[1, 2, 3, 4]), 0);
-        assert_eq!(solve_captcha(&[9, 1, 2, 1, 2, 1, 2, 9]), 9);
+        assert_eq!(solve_captcha(&[], 0), 0);
+        assert_eq!(solve_captcha(&[1, 1, 2, 2], 1), 3);
+        assert_eq!(solve_captcha(&[1, 1, 1, 1], 1), 4);
+        assert_eq!(solve_captcha(&[1, 2, 3, 4], 1), 0);
+        assert_eq!(solve_captcha(&[9, 1, 2, 1, 2, 1, 2, 9], 1), 9);
+    }
+
+    #[test]
+    fn part_two_examples_test() {
+        assert_eq!(solve_captcha(&[], 0), 0);
+        assert_eq!(solve_captcha(&[1, 2, 1, 2], 2), 6);
+        assert_eq!(solve_captcha(&[1, 2, 2, 1], 2), 0);
+        assert_eq!(solve_captcha(&[1, 2, 3, 4, 2, 5], 3), 4);
+        assert_eq!(solve_captcha(&[1, 2, 3, 1, 2, 3], 3), 12);
+        assert_eq!(solve_captcha(&[1, 2, 1, 3, 1, 4, 1, 5], 4), 4);
     }
 }
