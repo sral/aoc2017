@@ -61,6 +61,10 @@
 // In this example, the sum of the results would be 4 + 3 + 2 = 9.
 //
 // What is the sum of each row's result in your puzzle input?
+//
+// Your puzzle answer was 250.
+//
+// Both parts of this puzzle are complete! They provide two gold stars: **
 use std::io;
 
 fn find_numerator(d: i32, candidates: &[i32]) -> Option<i32> {
