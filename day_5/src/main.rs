@@ -41,14 +41,45 @@
 // Your puzzle answer was 336905.
 //
 // The first half of this puzzle is complete! It provides one gold star: *
+//
+// --- Part Two ---
+// Now, the jumps are even stranger: after each jump, if the offset was
+// three or more, instead decrease it by 1. Otherwise, increase it by 1 as
+// before.
+//
+// Using this rule with the above example, the process now takes 10 steps,
+// and the offset values after finding the exit are left as 2 3 2 3 -1.
+//
+// How many steps does it now take to reach the exit?
+//
+// Your puzzle answer was 21985262.
+//
+// Both parts of this puzzle are complete! They provide two gold stars: **
 use std::io;
 
-fn find_exit(instructions: &mut [i32]) -> u32 {
+fn find_exit_part_one(instructions: &mut [i32]) -> u32 {
     let mut index: i32 = 0;
     let mut steps: u32 = 0;
     while index < instructions.len() as i32 {
         let offset = instructions[index as usize];
         instructions[index as usize] += 1;
+        index += offset;
+        steps += 1;
+    }
+
+    steps
+}
+
+fn find_exit_part_two(instructions: &mut [i32]) -> u32 {
+    let mut index: i32 = 0;
+    let mut steps: u32 = 0;
+    while index < instructions.len() as i32 {
+        let offset = instructions[index as usize];
+        if offset >= 3 {
+            instructions[index as usize] -= 1;
+        } else {
+            instructions[index as usize] += 1;
+        }
         index += offset;
         steps += 1;
     }
@@ -67,8 +98,10 @@ fn main() {
         instructions.push(n);
         buf.clear();
     }
-    let steps = find_exit(&mut instructions);
-    println!("Steps to exit: {}", steps);
+    let steps_part_one = find_exit_part_one(&mut instructions.clone());
+    let steps_part_two = find_exit_part_two(&mut instructions);
+    println!("Steps to exit part one: {}", steps_part_one);
+    println!("Steps to exit part two: {}", steps_part_two);
 }
 
 #[cfg(test)]
@@ -76,9 +109,20 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_example(){
+    fn test_example_part_one() {
         let mut instructions = vec![0, 3, 0, 1, -3];
+        let mutated_instruction = vec![2, 5, 0, 1, -2];
         let steps_to_exit = 5;
-        assert_eq!(find_exit(&mut instructions), steps_to_exit);
+        assert_eq!(find_exit_part_one(&mut instructions), steps_to_exit);
+        assert_eq!(instructions, mutated_instruction);
+    }
+
+    #[test]
+    fn test_example_part_two() {
+        let mut instructions = vec![0, 3, 0, 1, -3];
+        let mutated_instruction = vec![2, 3, 2, 3, -1];
+        let steps_to_exit = 10;
+        assert_eq!(find_exit_part_two(&mut instructions), steps_to_exit);
+        assert_eq!(instructions, mutated_instruction);
     }
 }
