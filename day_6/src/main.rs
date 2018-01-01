@@ -47,7 +47,24 @@
 //
 // Your puzzle answer was 3156.
 //
-// The first half of this puzzle is complete! It provides one gold star: *
+// The first half of this puzzle is complete! It provides one gold star: *¨
+//
+// --- Part Two ---
+//
+// Out of curiosity, the debugger would also like to know the size of
+// the loop: starting from a state that has already been seen, how many block
+// redistribution cycles must be performed before that same state is seen
+// again?
+//
+// In the example above, 2 4 1 2 is seen again after four cycles, and so
+// the answer in that example would be 4.
+//
+// How many cycles are in the infinite loop that arises from the configuration
+// in your puzzle input?
+//
+// Your puzzle answer was 1610.
+//
+// Both parts of this puzzle are complete! They provide two gold stars: **
 use std::io;
 use std::collections::HashSet;
 
@@ -95,7 +112,8 @@ fn main() {
         .split_whitespace()
         .map(|n| n.parse::<u32>().unwrap())
         .collect();
-    println!("{:?}", reallocate(&mut banks).unwrap());
+    println!("Part one: {}", reallocate(&mut banks).unwrap());
+    println!("Part two: {}", reallocate(&mut banks).unwrap());
 }
 
 mod test {
@@ -111,9 +129,18 @@ mod test {
     }
 
     #[test]
-    fn test_example() {
+    fn test_reallocate() {
+        assert_eq!(reallocate(&mut vec![]), None);
+        assert_eq!(reallocate(&mut vec![1]), Some(1));
+        assert_eq!(reallocate(&mut vec![1, 0]), Some(2));
+        assert_eq!(reallocate(&mut vec![0, 0, 1]), Some(3));
+    }
+
+    #[test]
+    fn test_examples() {
         let mut banks = vec![0, 2, 7, 0];
         assert_eq!(reallocate(&mut banks), Some(5));
+        assert_eq!(reallocate(&mut banks), Some(4));
         assert_eq!(banks, vec![2, 4, 1, 2])
     }
 }
